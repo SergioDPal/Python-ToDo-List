@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Todo List</title>
+  </head>
+  <body>
+    {% if session['username'] %}
+    <h1>Hello {{ session['username'] }}</h1>
+    <h2>Tasks</h2>
+    {% for task in tasks %}
+    <div>
+      {% if task.completed %}
+      <h3><s>{{ task.title }}</s></h3>
+      {% if task.description %}
+      <p><s>{{ task.description }}</s></p>
+      {% endif %} {% else %}
+      <h3>{{ task.title }}</h3>
+      {% if task.description %}
+      <p>{{ task.description }}</p>
+      {% endif %} {% endif %}
+      <p>Due date: {{ task.due_date }}</p>
+      <form
+        name="updateTask"
+        action="/tasks/{{ task.id }}"
+        method="POST"
+      >
+        <input
+          type="hidden"
+          name="_method"
+          value="PUT"
+        />
+        <input
+          type="hidden"
+          name="completed"
+          value="{% if task.completed %}false{% else %}true{% endif %}"
+        />
+        <input
+          type="submit"
+          value="{% if task.completed %}Mark Incomplete{% else %}Mark Complete{% endif %}"
+        />
+      </form>
+      <form
+        name="deleteTask"
+        action="/tasks/{{task.id}}/delete"
+        method="POST"
+      >
+        <input
+          type="submit"
+          value="Delete Task"
+        />
+      </form>
+    </div>
+    {% endfor %}
+    <h2>Create Task</h2>
+    <form
+      name="createTask"
+      action="/tasks"
+      method="POST"
+    >
+      <input
+        type="text"
+        name="title"
+        title="title"
+        placeholder="Task Title"
+      />
+      <input
+        type="text"
+        name="description"
+        title="description"
+        placeholder="Task description"
+      />
+      <input
+        type="date"
+        name="due_date"
+        title="due_date"
+      />
+      <input
+        type="submit"
+        value="Add Task"
+      />
+    </form>
+    <a href="/logout">Logout</a>
+    {% else %}
+    <h1>Hello World</h1>
+    <a href="/login">Login</a>
+    {% endif %}
+  </body>
+</html>
